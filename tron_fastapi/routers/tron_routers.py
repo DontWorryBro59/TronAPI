@@ -1,8 +1,9 @@
 from fastapi import APIRouter, HTTPException
-from tron_fastapi.repositories import TronRepo
-from tron_fastapi.config.config import logger
-tn_router = APIRouter(tags=['Tron'], prefix='/tron')
 
+from tron_fastapi.config.config import logger
+from tron_fastapi.repositories import TronRepo
+
+tn_router = APIRouter(tags=['Tron'], prefix='/tron')
 
 
 @tn_router.post('/{address}')
