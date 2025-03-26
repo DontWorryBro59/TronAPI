@@ -1,16 +1,20 @@
 from datetime import datetime
+
 from pydantic import BaseModel, ConfigDict
 
 
-class WalletBase(BaseModel):
-    address: str
+class WalletCreate(BaseModel):
+    balance: float
     bandwidth: int
     energy: int
-    balance: float
 
     model_config = ConfigDict(from_attributes=True)
 
 
+class WalletBase(WalletCreate):
+    address: str
+
+
 class WalletFromDB(WalletBase):
     id: int
-    request_data: datetime
+    request_date: datetime
