@@ -1,3 +1,3 @@
-__all__ = ["TronRepo"]
+__all__ = ["TronDB", "TronRepo"]
 
-from .repositories import TronRepo
+from repositories.repositories import TronDB, TronRepo

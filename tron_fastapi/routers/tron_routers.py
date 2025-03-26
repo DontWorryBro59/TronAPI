@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from tron_fastapi.config.config import logger
-from tron_fastapi.repositories import TronRepo
+from tron_fastapi.repositories import TronRepo, TronDB
 from tron_fastapi.database.db_helper import db_help
 
 tn_router = APIRouter(tags=["Tron"], prefix="/tron")
@@ -22,6 +22,9 @@ async def check_adress(
 
 
 @tn_router.get("/")
-async def get_requests(page: int = 1, page_size: int = 10):
-    # Здесь нужно реализовать логику получения списка запросов
-    pass
+async def get_requests(
+    page: int = 1,
+    page_size: int = 10,
+    session: AsyncSession = Depends(db_help.get_session),
+):
+    result = await TronDB.get_last_data(page=page, page_size=page_size, session=session)
