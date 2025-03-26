@@ -3,11 +3,11 @@ from typing import List, Union
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from schemas.TronSchemas import WalletBase
+from tron_fastapi.schemas.TronSchemas import WalletBase
 from tron_fastapi.config.config import logger
 from tron_fastapi.database.db_helper import db_help
 from tron_fastapi.models.tables import AddressRequestORM
-from tron_fastapi.repositories import TronRepo, TronDB
+from tron_fastapi.repositories.repositories import TronRepo, TronDB
 from tron_fastapi.schemas.TronSchemas import WalletFromDB, WalletCreate
 
 tn_router = APIRouter(tags=["Tron"], prefix="/tron")
