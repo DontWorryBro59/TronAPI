@@ -3,7 +3,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
 from tron_fastapi.config.config import logger
 from tron_fastapi.config.config import settings
 from tron_fastapi.models.base import Base
-from tron_fastapi.models.tables import Address_request  # noqa
+from tron_fastapi.models.tables import AddressRequestORM  # noqa
 
 
 class DatabaseHelper:

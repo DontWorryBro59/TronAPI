@@ -5,7 +5,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from tronpy import Tron
 from tronpy.exceptions import BadAddress
-from tron_fastapi.models.tables import Address_request
+from tronpy.providers import HTTPProvider
+
+from tron_fastapi.config.config import logger, settings
+from tron_fastapi.models.tables import AddressRequestORM
 
 
 class TronRepo:
@@ -14,14 +17,12 @@ class TronRepo:
     """
 
     "Create Tronpy client"
-    tron_client = Tron()
+    tron_client = Tron(HTTPProvider(api_key=[settings.API_KEY1]))
 
     @classmethod
     def check_address(cls, address: str) -> bool:
         """
         Checking address for wallet
-        :param address: address of wallet
-        :return: True or False
         """
 
         # Проверяем наличие кошелька по адресу
@@ -41,11 +42,9 @@ class TronRepo:
     def get_date_by_address(cls, address: str) -> dict:
         """
         Get information about wallet
-        :param address: address of wallet
-        :return: dict with information about wallet
         """
         try:
-            balance = cls.tron_client.get_account_balance(address)
+            balance = round(float(cls.tron_client.get_account_balance(address)), 2)
             bandwidth = cls.tron_client.get_bandwidth(address)
             energy = cls.tron_client.get_account_resource(address)["TotalEnergyLimit"]
             result = {"balance": balance, "bandwidth": bandwidth, "energy": energy}
@@ -65,18 +64,28 @@ class TronDB:
         cls, page: int, page_size: int, session: AsyncSession
     ) -> list:
         """
-        Get last data from database
-        :param page: Number of page
-        :param page_size: Size of page
-        :param session: AsyncSession
-        :return:
+        Get last data from database with pagination
         """
         query = (
-            select(Address_request)
-            .order_by(Address_request.id.desc())
+            select(AddressRequestORM)
+            .order_by(AddressRequestORM.id.desc())
             .limit(page_size)
             .offset((page - 1) * page_size)
         )
         result = await session.execute(query)
         result = result.scalars().all()
         print(result)
+
+        logger.info(f"Get {page_size} wallets from database")
+        logger.info(f"Wallets: {result}")
+
+    @classmethod
+    async def post_new_wallet(
+        cls, wallet: AddressRequestORM, session: AsyncSession
+    ) -> dict:
+        """
+        Post new wallet to database
+        """
+        logger.info(f"Wallet {wallet.address} was created")
+        session.add(wallet)
+        await session.commit()
