@@ -9,6 +9,7 @@ from tronpy.providers import HTTPProvider
 
 from tron_fastapi.config.config import logger, settings
 from tron_fastapi.models.tables import AddressRequestORM
+from tron_fastapi.schemas.TronSchemas import WalletFromDB
 
 
 class TronRepo:
@@ -44,11 +45,27 @@ class TronRepo:
         Get information about wallet
         """
         try:
+            account_resource = cls.tron_client.get_account_resource(address)
+
+            # Извлекаем баланс
             balance = round(float(cls.tron_client.get_account_balance(address)), 2)
-            bandwidth = cls.tron_client.get_bandwidth(address)
-            energy = cls.tron_client.get_account_resource(address)["TotalEnergyLimit"]
-            result = {"balance": balance, "bandwidth": bandwidth, "energy": energy}
-            return result
+
+            # Получаем Bandwidth и Energy
+
+            # Bandwidth
+            bandwidth_used = account_resource.get("freeNetLimit", 0)
+            total_bandwidth = account_resource.get("NetLimit", 0)
+            bandwidth = total_bandwidth - bandwidth_used
+
+            # Energy
+            total_energy = account_resource.get("TotalEnergyLimit", 0)
+            energy_used = account_resource.get("tronPowerUsed", 0)
+            energy = total_energy - energy_used
+
+            # Формируем итоговый словарь
+            wallet_info = {"balance": balance, "bandwidth": bandwidth, "energy": energy}
+
+            return wallet_info
         except HTTPError:
             # Данная ошибка связана с бесплатным ключом API. Нужно дождаться доступа
             cls.get_date_by_address(address)
@@ -72,12 +89,11 @@ class TronDB:
             .limit(page_size)
             .offset((page - 1) * page_size)
         )
-        result = await session.execute(query)
-        result = result.scalars().all()
-        print(result)
-
-        logger.info(f"Get {page_size} wallets from database")
-        logger.info(f"Wallets: {result}")
+        models = await session.execute(query)
+        models = models.scalars().all()
+        # Convert models to dict
+        result = [WalletFromDB.model_validate(model) for model in models]
+        return result
 
     @classmethod
     async def post_new_wallet(
