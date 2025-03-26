@@ -1,6 +1,5 @@
 from datetime import datetime
-
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 
 
 class WalletBase(BaseModel):
@@ -8,6 +7,8 @@ class WalletBase(BaseModel):
     bandwidth: int
     energy: int
     balance: float
+
+    model_config = ConfigDict(from_attributes=True)
 
 
 class WalletFromDB(WalletBase):
