@@ -4,8 +4,6 @@ from requests import HTTPError
 from tronpy import Tron
 from tronpy.exceptions import BadAddress
 
-tron = Tron()
-
 
 class TronRepo:
     """
@@ -25,7 +23,7 @@ class TronRepo:
 
         # Проверяем наличие кошелька по адресу
         try:
-            wallet = tron.get_account(address)
+            wallet = cls.tron_client.get_account(address)
             if wallet:
                 return True
         except BadAddress:
@@ -44,14 +42,11 @@ class TronRepo:
         :return: словарь с информацией о кошельке
         """
         try:
-            balance = tron.get_account_balance(address)
-            bandwidth = tron.get_bandwidth(address)
-            energy = tron.get_account_resource(address)['TotalEnergyLimit']
+            balance = cls.tron_client.get_account_balance(address)
+            bandwidth = cls.tron_client.get_bandwidth(address)
+            energy = cls.tron_client.get_account_resource(address)['TotalEnergyLimit']
             result = {"balance": balance, "bandwidth": bandwidth, "energy": energy}
             return result
         except HTTPError:
             # Данная ошибка связана с бесплатным ключом API. Нужно дождаться доступа
             cls.get_date_by_address(address)
-
-
-

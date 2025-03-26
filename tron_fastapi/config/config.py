@@ -9,7 +9,9 @@ logger = logging.getLogger(__name__)
 
 
 class Settings(BaseSettings):
-    DATABASE_URL: str = "sqlite+aiosqlite:///./db.tron"
+    DATABASE_URL: str = "sqlite+aiosqlite:///./db.sqlite3"
+    #DB_ECHO: bool = False
+    DB_ECHO: bool = True
 
 
 settings = Settings()
