@@ -21,11 +21,11 @@ async def check_address(
         logger.error(f"Кошелек не найден: {address}")
         return HTTPException(status_code=404, detail="Кошелек не найден")
     # Получаем данные о кошельке и создаем экземпляр модели
-    result = TronRepo.get_date_by_address(address)
+    result = TronRepo.get_data_by_address(address)
     new_wallet = AddressRequestORM(address=address, **result)
     ##Записываем данные в БД и получаем ответ
     await TronDB.post_new_wallet(wallet=new_wallet, session=session)
-    result = WalletCreate.parse_obj(result)
+    result = WalletCreate.model_validate(result)
     return result
 
 

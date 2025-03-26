@@ -40,7 +40,7 @@ class TronRepo:
             return cls.check_address(address)
 
     @classmethod
-    def get_date_by_address(cls, address: str) -> dict:
+    def get_data_by_address(cls, address: str) -> dict:
         """
         Get information about wallet
         """
@@ -68,7 +68,7 @@ class TronRepo:
             return wallet_info
         except HTTPError:
             # Данная ошибка связана с бесплатным ключом API. Нужно дождаться доступа
-            cls.get_date_by_address(address)
+            cls.get_data_by_address(address)
 
 
 class TronDB:
