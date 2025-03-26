@@ -1,23 +1,27 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from tron_fastapi.config.config import logger
 from tron_fastapi.repositories import TronRepo
+from tron_fastapi.database.db_helper import db_help
 
-tn_router = APIRouter(tags=['Tron'], prefix='/tron')
+tn_router = APIRouter(tags=["Tron"], prefix="/tron")
 
 
-@tn_router.post('/{address}')
-async def check_adress(address: str):
+@tn_router.post("/{address}")
+async def check_adress(
+    address: str, session: AsyncSession = Depends(db_help.get_session)
+):
     if not TronRepo.check_address(address):
-        logger.error(f'Кошелек не найден: {address}')
+        logger.error(f"Кошелек не найден: {address}")
         return HTTPException(status_code=404, detail="Кошелек не найден")
-    logger.info(f'Получение данных для кошелька {address}')
+    logger.info(f"Получение данных для кошелька {address}")
     result = TronRepo.get_date_by_address(address)
-    logger.info(f'Данные получены для кошелька {address}')
+    logger.info(f"Данные получены для кошелька {address}")
     return result
 
 
-@tn_router.get('/')
+@tn_router.get("/")
 async def get_requests(page: int = 1, page_size: int = 10):
     # Здесь нужно реализовать логику получения списка запросов
     pass

@@ -1,5 +1,3 @@
-__all__ = [
-    'TronRepo'
-]
+__all__ = ["TronRepo"]
 
 from .repositories import TronRepo
