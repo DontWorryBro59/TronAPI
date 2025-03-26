@@ -1,9 +1,18 @@
+from contextlib import asynccontextmanager
+
 import uvicorn
 from fastapi import FastAPI
 
+from tron_fastapi.database.db_helper import db_help
 from tron_fastapi.routers.tron_routers import tn_router
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    await db_help.create_all_tables()
+    yield
+
+app = FastAPI(lifespan=lifespan)
 app.include_router(tn_router)
 
 if __name__ == '__main__':
