@@ -10,6 +10,8 @@ class AddressRequestORM(Base):
     This is a class that represents a request for a TRON address.
     """
 
+    __tablename__ = "address_requests"
+
     address: Mapped[str]
     bandwidth: Mapped[int]
     energy: Mapped[int]
