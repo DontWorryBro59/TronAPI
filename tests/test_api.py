@@ -38,6 +38,7 @@ def override_database(test_db_helper):
     app.dependency_overrides.clear()
 
 
+# Фикстура для создания и удаления таблиц в тестовой базе
 @pytest_asyncio.fixture(scope="function", autouse=True)
 async def setup_test_db(test_db_helper):
     """Clean up the test database"""
@@ -75,3 +76,15 @@ async def test_get_wallet_error(async_client):
     response = await async_client.post(f"/tron/{test_wallet}")
     assert response.status_code == 404
     assert response.json()["detail"] == f"Wallet not found with adress: {test_wallet}"
+
+
+@pytest.mark.asyncio
+async def test_get_all_wallets(async_client):
+    """
+    Test that the API returns a list of wallets.
+    """
+    test_wallet = "TYh6mgoMNZTCsgpYHBz7gttEfrQmDMABub"
+    await async_client.post(f"/tron/{test_wallet}")
+    response = await async_client.get("/tron/")
+    assert response.status_code == 200
+    assert response.json()[0].get("address") == test_wallet
