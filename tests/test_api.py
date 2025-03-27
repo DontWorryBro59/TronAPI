@@ -1,6 +1,6 @@
 import os
 import sys
-
+import asyncio
 import pytest
 import pytest_asyncio
 from httpx import AsyncClient, ASGITransport
@@ -11,10 +11,18 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 from tron_fastapi.main import app
 from tron_fastapi.database.db_helper import DatabaseHelper, db_help
 from tron_fastapi.config.config import settings
-import asyncio
+
 
 # Используем SQLite in-memory для тестов
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
+
+
+# Используем автоматическое управление циклом событий через pytest-asyncio
+@pytest_asyncio.fixture(scope="session", autouse=True)
+async def event_loop():
+    """Automatically manage the event loop"""
+    loop = asyncio.get_event_loop()
+    yield loop
 
 
 @pytest.fixture(scope="session")
