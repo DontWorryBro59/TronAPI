@@ -79,7 +79,7 @@ async def test_get_wallet_error(async_client):
     response = await async_client.post(f"/tron/{test_wallet}")
 
     assert response.status_code == 404
-    assert response.json()["detail"] == f"Wallet not found with adress: {test_wallet}"
+    assert response.json()["detail"] == f"Wallet not found with address: {test_wallet}"
 
 
 @pytest.mark.asyncio
