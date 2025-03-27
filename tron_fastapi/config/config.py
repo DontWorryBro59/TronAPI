@@ -25,8 +25,6 @@ class Settings(BaseSettings):
     # DB_ECHO: bool = True
     # Прописываем ключи для обращения к API сервиса Tron, default - тестовая
     API_KEY1: str = "d0be5201-e79d-48e9-853f-88fc2b3106d9"
-    API_KEY2: str
-    API_KEY3: str
 
 
 settings = Settings()

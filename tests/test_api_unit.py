@@ -62,7 +62,7 @@ async def test_post_new_wallet(session: AsyncSession):
         address="test_wallet", bandwidth=0, energy=0, balance=0
     )
     await TronDB.post_new_wallet(test_wallet, session)
-    result = await TronDB.get_last_data(page=page, page_size=page_size, session=session)
+    result = await TronDB.get_last_data(page=1, page_size=10, session=session)
     assert len(result) == 1
     assert result[0].address == "test_wallet"
     assert result[0].bandwidth == 0
