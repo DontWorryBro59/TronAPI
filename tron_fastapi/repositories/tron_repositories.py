@@ -1,5 +1,7 @@
 import time
 
+from typing import List
+
 from requests import HTTPError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -81,7 +83,7 @@ class TronDB:
     @classmethod
     async def get_last_data(
         cls, page: int, page_size: int, session: AsyncSession
-    ) -> list:
+    ) -> List[WalletFromDB]:
         """
         Get last data from database with pagination
         """

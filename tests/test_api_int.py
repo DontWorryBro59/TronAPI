@@ -9,7 +9,7 @@ from httpx import AsyncClient, ASGITransport
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from tron_fastapi.main import app
-from tron_fastapi.database.db_helper import DatabaseHelper, db_help
+from tron_fastapi.database.db_helper import DatabaseHelper, db_helper
 from tron_fastapi.config.config import settings
 
 
@@ -35,7 +35,7 @@ def test_db_helper():
 def override_database(test_db_helper):
     """Change the database settings and override the database session"""
     settings.DATABASE_URL = TEST_DATABASE_URL
-    app.dependency_overrides[db_help.get_session] = test_db_helper.get_session
+    app.dependency_overrides[db_helper.get_session] = test_db_helper.get_session
     yield
     # Очищаем зависимости после тестов
     app.dependency_overrides.clear()

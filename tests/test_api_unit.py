@@ -2,7 +2,7 @@ import asyncio
 import pytest, pytest_asyncio
 from sqlalchemy.orm import sessionmaker
 
-from tron_fastapi.repositories.repositories import TronDB
+from tron_fastapi.repositories.tron_repositories import TronDB
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from tron_fastapi.models.tables import AddressRequestORM
 

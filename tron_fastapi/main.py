@@ -3,13 +3,13 @@ from contextlib import asynccontextmanager
 import uvicorn
 from fastapi import FastAPI
 
-from tron_fastapi.database.db_helper import db_help
+from tron_fastapi.database.db_helper import db_helper
 from tron_fastapi.routers.tron_routers import tn_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    await db_help.create_all_tables()
+    await db_helper.create_all_tables()
     yield
 
 

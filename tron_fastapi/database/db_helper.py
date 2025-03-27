@@ -10,8 +10,6 @@ class DatabaseHelper:
     """
     DatabaseHelper is a class that handles the creation of all the tables, destroy them
     and create a new session
-    :param url: Database URL
-    :param echo: True if you want to see the SQL queries
     """
 
     def __init__(self, url, echo):
@@ -36,4 +34,4 @@ class DatabaseHelper:
             await db.close()
 
 
-db_help = DatabaseHelper(settings.DATABASE_URL, settings.DB_ECHO)
+db_helper = DatabaseHelper(settings.DATABASE_URL, settings.DB_ECHO)
