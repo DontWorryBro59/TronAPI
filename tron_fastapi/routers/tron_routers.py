@@ -16,14 +16,14 @@ tn_router = APIRouter(tags=["Tron"], prefix="/tron")
 @tn_router.post("/{address}")
 async def check_address(
     address: str, session: AsyncSession = Depends(db_help.get_session)
-):
-    if not TronRepo.check_address(address):
+) -> WalletCreate:
+    if not await TronRepo.check_address(address):
         logger.error(f"Кошелек не найден: {address}")
         raise HTTPException(
             status_code=404, detail=f"Wallet not found with adress: {address}"
         )
     # Получаем данные о кошельке и создаем экземпляр модели
-    result = TronRepo.get_data_by_address(address)
+    result = await TronRepo.get_data_by_address(address)
     new_wallet = AddressRequestORM(address=address, **result)
     ##Записываем данные в БД и получаем ответ
     await TronDB.post_new_wallet(wallet=new_wallet, session=session)
