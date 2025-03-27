@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List
 
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -20,7 +20,7 @@ async def check_address(
     if not await TronRepo.check_address(address):
         logger.error(f"Кошелек не найден: {address}")
         raise HTTPException(
-            status_code=404, detail=f"Wallet not found with adress: {address}"
+            status_code=404, detail=f"Wallet not found with address: {address}"
         )
     # Получаем данные о кошельке и создаем экземпляр модели
     result = await TronRepo.get_data_by_address(address)
