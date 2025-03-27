@@ -3,9 +3,9 @@ import time
 from requests import HTTPError
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
-from tronpy import Tron
+from tronpy import AsyncTron
 from tronpy.exceptions import BadAddress
-from tronpy.providers import HTTPProvider
+from tronpy.providers import AsyncHTTPProvider
 
 from tron_fastapi.config.config import logger, settings
 from tron_fastapi.models.tables import AddressRequestORM
@@ -18,17 +18,17 @@ class TronRepo:
     """
 
     "Create Tronpy client"
-    tron_client = Tron(HTTPProvider(api_key=[settings.API_KEY1]))
+    tron_client = AsyncTron(AsyncHTTPProvider(api_key=settings.API_KEY1))
 
     @classmethod
-    def check_address(cls, address: str) -> bool:
+    async def check_address(cls, address: str) -> bool:
         """
         Checking address for wallet
         """
 
         # Проверяем наличие кошелька по адресу
         try:
-            wallet = cls.tron_client.get_account(address)
+            wallet = await cls.tron_client.get_account(address)
             if wallet:
                 return True
         except BadAddress:
@@ -37,18 +37,20 @@ class TronRepo:
         except HTTPError:
             # Данная ошибка связана с бесплатным ключом API. Нужно дождаться доступа
             time.sleep(1)
-            return cls.check_address(address)
+            return await cls.check_address(address)
 
     @classmethod
-    def get_data_by_address(cls, address: str) -> dict:
+    async def get_data_by_address(cls, address: str) -> dict:
         """
         Get information about wallet
         """
         try:
-            account_resource = cls.tron_client.get_account_resource(address)
+            account_resource = await cls.tron_client.get_account_resource(address)
 
             # Извлекаем баланс
-            balance = round(float(cls.tron_client.get_account_balance(address)), 2)
+            balance = round(
+                float(await cls.tron_client.get_account_balance(address)), 2
+            )
 
             # Получаем Bandwidth и Energy
 
@@ -68,7 +70,7 @@ class TronRepo:
             return wallet_info
         except HTTPError:
             # Данная ошибка связана с бесплатным ключом API. Нужно дождаться доступа
-            cls.get_data_by_address(address)
+            await cls.get_data_by_address(address)
 
 
 class TronDB:
